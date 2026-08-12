@@ -63,7 +63,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-extrabold text-white">
-                      Hello, {user?.name || 'Sarah Jenkins'} 👋
+                      Hello Dr. Gargi and Pranay 👋
                     </h1>
                     {isPremium ? (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">

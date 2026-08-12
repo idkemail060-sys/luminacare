@@ -49,8 +49,10 @@ export const Sidebar: React.FC = () => {
 
         {/* Navigation Items */}
         <nav className="space-y-1.5">
-          {navItems.map(item => {
-            const Icon = item.icon;
+          {navItems
+            .filter(item => !item.admin || user?.role === 'admin')
+            .map(item => {
+              const Icon = item.icon;
             return (
               <NavLink
                 key={item.path}

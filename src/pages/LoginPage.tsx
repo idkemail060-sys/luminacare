@@ -154,43 +154,31 @@ export const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Role Tab Switch */}
-          <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800 mb-5">
+          {/* Patient vs Doctor Tab Switch */}
+          <div className="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800 mb-5">
             <button
               type="button"
               onClick={() => setActiveTab('patient')}
-              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
+              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                 activeTab === 'patient'
                   ? 'bg-cyan-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <UserIcon className="w-3.5 h-3.5" />
-              <span>Patient</span>
+              <span>Patient Portal</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('doctor')}
-              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
+              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                 activeTab === 'doctor'
                   ? 'bg-teal-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Stethoscope className="w-3.5 h-3.5" />
-              <span>Doctor</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('admin')}
-              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
-                activeTab === 'admin'
-                  ? 'bg-amber-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin</span>
+              <span>Doctor Portal</span>
             </button>
           </div>
 
@@ -202,31 +190,20 @@ export const LoginPage: React.FC = () => {
                 Quick Demo Access
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => handleDemoLogin('patient')}
-                className="py-1.5 px-1.5 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 border border-cyan-500/30 font-semibold text-[11px] transition text-center truncate"
+                className="py-1.5 px-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 border border-cyan-500/30 font-semibold text-[11px] transition text-center truncate"
               >
-                Patient
+                Patient Demo
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('doctor')}
-                className="py-1.5 px-1.5 rounded-xl bg-teal-600/30 hover:bg-teal-600/50 text-teal-200 border border-teal-500/30 font-semibold text-[11px] transition text-center truncate"
+                className="py-1.5 px-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/50 text-teal-200 border border-teal-500/30 font-semibold text-[11px] transition text-center truncate"
               >
-                Doctor
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  login({ id: 'admin-1', name: 'Hospital Administrator', email: 'admin@lumina.health' }, 'admin');
-                  navigate('/admin');
-                }}
-                className="py-1.5 px-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-200 border border-amber-500/30 font-semibold text-[11px] transition text-center truncate flex items-center justify-center gap-1"
-              >
-                <ShieldCheck className="w-3 h-3 text-amber-400 shrink-0" />
-                <span>Admin</span>
+                Doctor Demo
               </button>
             </div>
           </div>
@@ -298,29 +275,15 @@ export const LoginPage: React.FC = () => {
               </>
             )}
 
-            {activeTab === 'admin' && (
-              <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-[11px] space-y-1">
-                <p className="font-bold flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  Admin Portal Authentication
-                </p>
-                <p className="text-[10px] text-amber-200/80">
-                  Enter your Administrator User ID and Password to manage hospital operations and bookings.
-                </p>
-              </div>
-            )}
-
             <div>
-              <label className="block text-slate-300 font-medium mb-1">
-                {activeTab === 'admin' ? 'Admin User ID / Email' : 'Email Address'}
-              </label>
+              <label className="block text-slate-300 font-medium mb-1">Email Address</label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                 <input
-                  type="text"
+                  type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder={activeTab === 'admin' ? 'admin' : activeTab === 'doctor' ? 'doctor@lumina.health' : 'patient@example.com'}
+                  placeholder={activeTab === 'doctor' ? 'doctor@lumina.health' : 'patient@example.com'}
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                 />
               </div>

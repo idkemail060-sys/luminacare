@@ -29,12 +29,16 @@ import {
   Building,
   RefreshCw,
   X,
-  FileText
+  FileText,
+  Lock,
+  LogOut
 } from 'lucide-react';
 
 export const AdminPage: React.FC = () => {
   const {
     user,
+    login,
+    logout,
     appointments,
     doctors,
     healthEntries,
@@ -48,9 +52,112 @@ export const AdminPage: React.FC = () => {
     deleteDoctor
   } = useApp();
 
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminAuthError, setAdminAuthError] = useState('');
+
   const [activeTab, setActiveTab] = useState<'appointments' | 'doctors' | 'health' | 'database'>('appointments');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleAdminAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminUsername.trim().toLowerCase() === 'admin' && adminPassword.trim() === '098765') {
+      login(
+        {
+          id: 'admin-1',
+          name: 'Hospital Administrator',
+          email: 'admin@lumina.health'
+        },
+        'admin'
+      );
+      setAdminAuthError('');
+      setAdminUsername('');
+      setAdminPassword('');
+    } else {
+      setAdminAuthError('Invalid Administrator credentials. Access denied.');
+    }
+  };
+
+  // If user is not authenticated as Admin, show restricted Admin Login Screen
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+        <Navbar />
+
+        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-12">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
+
+            <div className="text-center space-y-2 relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
+                <ShieldCheck className="w-7 h-7" />
+              </div>
+              <h2 className="text-xl font-extrabold text-white tracking-tight">
+                Administrator Portal
+              </h2>
+              <p className="text-xs text-slate-400">
+                Restricted System Access &bull; Administrator Authentication Required
+              </p>
+            </div>
+
+            {adminAuthError && (
+              <div className="p-3 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span>{adminAuthError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleAdminAuth} className="space-y-4 text-xs relative z-10">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1.5">Username / User ID</label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    required
+                    value={adminUsername}
+                    onChange={e => setAdminUsername(e.target.value)}
+                    placeholder="Enter admin username"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1.5">Password</label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                  <input
+                    type="password"
+                    required
+                    value={adminPassword}
+                    onChange={e => setAdminPassword(e.target.value)}
+                    placeholder="Enter admin password"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 font-medium"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                <ShieldCheck className="w-4 h-4 text-slate-950" />
+                <span>Authenticate & Access Portal</span>
+              </button>
+            </form>
+
+            <div className="text-center pt-2 border-t border-slate-800 text-[11px] text-slate-500">
+              Authorized Personnel Only &bull; LuminaCare Hospital Systems
+            </div>
+          </div>
+        </div>
+
+        <Footer />
+      </div>
+    );
+  }
 
   // Modals state
   const [showAddDoctorModal, setShowAddDoctorModal] = useState<boolean>(false);
@@ -193,7 +300,7 @@ export const AdminPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={exportCsv}
@@ -209,6 +316,15 @@ export const AdminPage: React.FC = () => {
                 >
                   <Plus className="w-4 h-4 text-slate-950" />
                   <span>Create Booking</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  className="px-4 py-2.5 rounded-2xl bg-rose-950/60 hover:bg-rose-900/80 border border-rose-500/40 text-rose-200 text-xs font-bold transition flex items-center gap-2 shadow-md"
+                  title="Lock Admin Portal & Sign Out"
+                >
+                  <LogOut className="w-4 h-4 text-rose-400" />
+                  <span>Sign Out</span>
                 </button>
               </div>
             </div>

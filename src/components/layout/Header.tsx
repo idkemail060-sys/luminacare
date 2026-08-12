@@ -159,14 +159,16 @@ export const Header: React.FC = () => {
                 <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
               </div>
 
-              <Link
-                to="/admin"
-                onClick={() => setShowProfileMenu(false)}
-                className="flex items-center gap-2 px-4 py-2 text-xs text-amber-300 hover:bg-slate-800 transition font-semibold"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>Admin Portal</span>
-              </Link>
+              {user?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setShowProfileMenu(false)}
+                  className="flex items-center gap-2 px-4 py-2 text-xs text-amber-300 hover:bg-slate-800 transition font-semibold"
+                >
+                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span>Admin Portal</span>
+                </Link>
+              )}
 
               <Link
                 to="/profile"
