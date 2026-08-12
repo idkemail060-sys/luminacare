@@ -12,15 +12,17 @@ import {
   User,
   LogOut,
   Hospital,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
-  const { isPremium, logout } = useApp();
+  const { user, isPremium, logout } = useApp();
   const navigate = useNavigate();
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Admin Portal', path: '/admin', icon: ShieldCheck, admin: true },
     { label: 'Find Doctors', path: '/doctors', icon: UserCheck },
     { label: 'Appointments', path: '/book-appointment', icon: Calendar },
     { label: 'AI Health Assistant', path: '/ai-assistant', icon: Bot },
@@ -64,11 +66,17 @@ export const Sidebar: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <Icon
                     className={`w-4 h-4 ${
-                      item.gold ? 'text-amber-400' : 'text-cyan-400'
+                      item.admin ? 'text-amber-400' : item.gold ? 'text-amber-400' : 'text-cyan-400'
                     }`}
                   />
                   <span>{item.label}</span>
                 </div>
+
+                {item.admin && (
+                  <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/40">
+                    ADMIN
+                  </span>
+                )}
 
                 {item.gold && !isPremium && (
                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">

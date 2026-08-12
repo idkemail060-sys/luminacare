@@ -13,6 +13,7 @@ import { HealthTrackerPage } from './pages/HealthTrackerPage';
 import { PremiumPage } from './pages/PremiumPage';
 import { TherapistPage } from './pages/TherapistPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { AdminPage } from './pages/AdminPage';
 
 function AppRoutes() {
   const { isLoggedIn } = useApp();
@@ -23,6 +24,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/home" element={<LandingPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/admin" element={<AdminPage />} />
       <Route path="/doctors" element={<DoctorsPage />} />
       <Route path="/doctors/:id" element={<DoctorsPage />} />
       <Route path="/book-appointment" element={<AppointmentBookingPage />} />

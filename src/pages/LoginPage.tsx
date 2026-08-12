@@ -15,7 +15,9 @@ import {
   Stethoscope,
   Sparkles,
   Compass,
-  X
+  X,
+  ShieldCheck,
+  KeyRound
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -48,6 +50,25 @@ export const LoginPage: React.FC = () => {
       return;
     }
 
+    // Check Admin credentials (userid: admin, password: 098765)
+    if ((email.trim().toLowerCase() === 'admin' || email.trim().toLowerCase() === 'admin@lumina.health') && password.trim() === '098765') {
+      login(
+        {
+          id: 'admin-1',
+          name: 'Hospital Administrator',
+          email: 'admin@lumina.health'
+        },
+        'admin'
+      );
+      navigate('/admin');
+      return;
+    }
+
+    if (activeTab === 'admin' && (email.trim().toLowerCase() !== 'admin' || password.trim() !== '098765')) {
+      setError('Invalid Admin Credentials. Please check your User ID and password.');
+      return;
+    }
+
     if (isSignup) {
       if (!name || !phone) {
         setError('Please provide your full name and phone number.');
@@ -68,7 +89,11 @@ export const LoginPage: React.FC = () => {
       },
       activeTab
     );
-    navigate('/dashboard');
+    if (activeTab === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const handleGoogleLoginSubmit = (selectedEmail?: string) => {
@@ -129,31 +154,43 @@ export const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Patient vs Doctor Tab Switch */}
-          <div className="grid grid-cols-2 gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800 mb-5">
+          {/* Role Tab Switch */}
+          <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-950 border border-slate-800 mb-5">
             <button
               type="button"
               onClick={() => setActiveTab('patient')}
-              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
                 activeTab === 'patient'
                   ? 'bg-cyan-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <UserIcon className="w-3.5 h-3.5" />
-              <span>Patient Login</span>
+              <span>Patient</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('doctor')}
-              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
                 activeTab === 'doctor'
                   ? 'bg-teal-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Stethoscope className="w-3.5 h-3.5" />
-              <span>Doctor Portal</span>
+              <span>Doctor</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('admin')}
+              className={`py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 ${
+                activeTab === 'admin'
+                  ? 'bg-amber-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Admin</span>
             </button>
           </div>
 
@@ -162,23 +199,34 @@ export const LoginPage: React.FC = () => {
             <div className="flex items-center justify-between text-cyan-300 font-semibold">
               <span className="flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                Quick Reviewer Demo Mode
+                Quick Demo Access
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               <button
                 type="button"
                 onClick={() => handleDemoLogin('patient')}
-                className="py-1.5 px-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 border border-cyan-500/30 font-semibold text-[11px] transition text-center"
+                className="py-1.5 px-1.5 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 border border-cyan-500/30 font-semibold text-[11px] transition text-center truncate"
               >
-                Demo Patient
+                Patient
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('doctor')}
-                className="py-1.5 px-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/50 text-teal-200 border border-teal-500/30 font-semibold text-[11px] transition text-center"
+                className="py-1.5 px-1.5 rounded-xl bg-teal-600/30 hover:bg-teal-600/50 text-teal-200 border border-teal-500/30 font-semibold text-[11px] transition text-center truncate"
               >
-                Demo Doctor
+                Doctor
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  login({ id: 'admin-1', name: 'Hospital Administrator', email: 'admin@lumina.health' }, 'admin');
+                  navigate('/admin');
+                }}
+                className="py-1.5 px-1.5 rounded-xl bg-amber-600/30 hover:bg-amber-600/50 text-amber-200 border border-amber-500/30 font-semibold text-[11px] transition text-center truncate flex items-center justify-center gap-1"
+              >
+                <ShieldCheck className="w-3 h-3 text-amber-400 shrink-0" />
+                <span>Admin</span>
               </button>
             </div>
           </div>
@@ -250,15 +298,29 @@ export const LoginPage: React.FC = () => {
               </>
             )}
 
+            {activeTab === 'admin' && (
+              <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-[11px] space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  Admin Portal Authentication
+                </p>
+                <p className="text-[10px] text-amber-200/80">
+                  Enter your Administrator User ID and Password to manage hospital operations and bookings.
+                </p>
+              </div>
+            )}
+
             <div>
-              <label className="block text-slate-300 font-medium mb-1">Email Address</label>
+              <label className="block text-slate-300 font-medium mb-1">
+                {activeTab === 'admin' ? 'Admin User ID / Email' : 'Email Address'}
+              </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder={activeTab === 'doctor' ? 'doctor@lumina.health' : 'patient@example.com'}
+                  placeholder={activeTab === 'admin' ? 'admin' : activeTab === 'doctor' ? 'doctor@lumina.health' : 'patient@example.com'}
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                 />
               </div>
@@ -283,7 +345,7 @@ export const LoginPage: React.FC = () => {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={activeTab === 'admin' ? '098765' : '••••••••'}
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                 />
               </div>

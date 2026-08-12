@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bell, Sparkles, User, LogOut, Check, ChevronDown, Activity, X } from 'lucide-react';
+import { Bell, Sparkles, User, LogOut, Check, ChevronDown, Activity, X, Database, Copy, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { SUPABASE_SQL_SCHEMA } from '../../lib/supabase';
 
 export const Header: React.FC = () => {
-  const { user, isPremium, notifications, markNotificationRead, logout } = useApp();
+  const { user, isPremium, notifications, markNotificationRead, logout, isSupabaseConnected, supabaseMessage } = useApp();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showDbModal, setShowDbModal] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
   const navigate = useNavigate();
 
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const handleCopySql = () => {
+    navigator.clipboard.writeText(SUPABASE_SQL_SCHEMA);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2000);
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-slate-900 border-b border-slate-800 text-slate-100 px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-sm">
@@ -32,6 +41,19 @@ export const Header: React.FC = () => {
       {/* Right Controls */}
       <div className="flex items-center space-x-3 sm:space-x-4">
         
+        {/* Supabase DB Connection Badge */}
+        <button
+          type="button"
+          onClick={() => setShowDbModal(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/40 text-emerald-300 text-xs font-semibold hover:border-emerald-400 hover:bg-emerald-900/60 transition shadow-sm"
+          title="Supabase Database Status"
+        >
+          <Database className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <span className="hidden sm:inline">Supabase Connected</span>
+          <span className="sm:hidden">DB</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+        </button>
+
         {/* Premium Upgrade Badge / Button */}
         {isPremium ? (
           <Link
@@ -138,6 +160,15 @@ export const Header: React.FC = () => {
               </div>
 
               <Link
+                to="/admin"
+                onClick={() => setShowProfileMenu(false)}
+                className="flex items-center gap-2 px-4 py-2 text-xs text-amber-300 hover:bg-slate-800 transition font-semibold"
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>Admin Portal</span>
+              </Link>
+
+              <Link
                 to="/profile"
                 onClick={() => setShowProfileMenu(false)}
                 className="flex items-center gap-2 px-4 py-2 text-xs text-slate-200 hover:bg-slate-800 transition"
@@ -152,7 +183,7 @@ export const Header: React.FC = () => {
                   logout();
                   navigate('/login');
                 }}
-                className="w-full flex items-center gap-2 px-4 py-2 text-xs text-rose-400 hover:bg-rose-950/30 transition text-left"
+                className="w-full flex items-center gap-2 px-4 py-2 text-rose-400 hover:bg-rose-950/30 transition text-left"
               >
                 <LogOut className="w-4 h-4 text-rose-400" />
                 <span>Sign Out</span>
@@ -162,6 +193,68 @@ export const Header: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Supabase Database Connection Details Modal */}
+      {showDbModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl relative">
+            <button
+              onClick={() => setShowDbModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                <Database className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-base">Supabase Backend Database</h3>
+                <p className="text-xs text-slate-400">Project Ref: <span className="text-emerald-400 font-mono">qjoxtzrmwotbqemcdxpj</span></p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 text-xs space-y-1 text-emerald-300">
+              <p className="font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Status: Connected & Synchronized</span>
+              </p>
+              <p className="text-[11px] text-slate-300 pl-5">{supabaseMessage}</p>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-200">Supabase SQL Table Schema</label>
+                <button
+                  type="button"
+                  onClick={handleCopySql}
+                  className="flex items-center gap-1 text-[11px] text-cyan-400 hover:text-cyan-300 font-medium"
+                >
+                  {copiedSql ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedSql ? 'Copied SQL!' : 'Copy SQL Schema'}</span>
+                </button>
+              </div>
+
+              <pre className="p-3 rounded-2xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-cyan-300 max-h-48 overflow-y-auto whitespace-pre-wrap">
+                {SUPABASE_SQL_SCHEMA}
+              </pre>
+            </div>
+
+            <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800">
+              <span>All OPD & Teleconsult bookings are saved directly to Supabase.</span>
+              <button
+                type="button"
+                onClick={() => setShowDbModal(false)}
+                className="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
+

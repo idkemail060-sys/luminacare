@@ -1,4 +1,4 @@
-export type UserRole = 'patient' | 'doctor';
+export type UserRole = 'patient' | 'doctor' | 'admin';
 
 export interface User {
   id: string;
@@ -56,7 +56,7 @@ export interface Appointment {
   time: string;
   type: 'in-person' | 'online';
   symptoms: string;
-  status: 'Upcoming' | 'Completed' | 'Cancelled';
+  status: 'Upcoming' | 'Completed' | 'Cancelled' | 'Accepted' | 'Pending';
   hospitalBranch?: string;
   consultationFee: number;
   createdAt: string;
