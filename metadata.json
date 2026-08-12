@@ -1,0 +1,6 @@
+{
+  "name": "Lumina Health System",
+  "description": "Comprehensive hospital platform featuring appointment scheduling, virtual consultations, doctor profiles, AI health assistant, and health tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
